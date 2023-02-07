@@ -37,12 +37,13 @@ function pretty_date(date_string) {
 export default async function attendanceRoute(req, env) {
   const { searchParams } = new URL(req.url);
   const session = searchParams.get("session");
+  const session_cookie_suffix = searchParams.get("sess_suffix");
   const StartDate = searchParams.get("start"); // YYYY-MM-DD
   const EndDate = searchParams.get("end"); // YYYY-MM-DD
   const rankby = searchParams.get("rankby"); // type, date
   const status = searchParams.get("status"); // 1, 5, 15, 10, 14 comma seperated (can have more than one)
 
-  if (!session || !StartDate || !EndDate || !rankby) {
+  if (!session || !session_cookie_suffix || !StartDate || !EndDate || !rankby) {
     return new Response("missing-params", { status: 400 });
   }
   if (rankby !== "type" && rankby !== "date") {
@@ -55,7 +56,7 @@ export default async function attendanceRoute(req, env) {
   )}`;
   const response = await fetch(request_url, {
     headers: {
-      cookie: "ASPSESSIONIDCUCTCBAD=" + session,
+      cookie: `ASPSESSIONID${session_cookie_suffix}=${session}`,
     },
   }).catch((err) => {
     return new Response("internal-server-error", { status: 500 });
@@ -84,7 +85,5 @@ export default async function attendanceRoute(req, env) {
     };
     attendance.push(attendanceData);
   });
-  console.log(request_url);
-
   return new Response(JSON.stringify(attendance), response);
 }

@@ -28,12 +28,13 @@ export default async function loginRoute(req, env) {
 
   const cookie_regex_match = response.headers
     .get("set-cookie")
-    .match(/ASPSESSIONIDCUCTCBAD=([A-Z]+);/);
+    .match(/ASPSESSIONID([A-Z]+)=([A-Z]+);/);
 
   if (!cookie_regex_match) {
     return new Response("internal-server-error", { status: 500 });
   }
-  const session_cookie = cookie_regex_match[1];
+  const session_cookie_suffix = cookie_regex_match[1];
+  const session_cookie = cookie_regex_match[2];
 
   const pwd_payload = btoa(pw);
   const login_req_data = {
@@ -50,7 +51,7 @@ export default async function loginRoute(req, env) {
     accept: "*/*",
     "Accept-Encoding": "gzip, deflate, br",
     "content-type": "application/x-www-form-urlencoded",
-    cookie: "ASPSESSIONIDCUCTCBAD=" + session_cookie,
+    cookie: `ASPSESSIONID${session_cookie_suffix}=${session_cookie}`,
     host: "isp.hci.edu.sg",
     "user-agent":
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:99.0) Gecko/20100101 Firefox/99.0",
@@ -70,6 +71,7 @@ export default async function loginRoute(req, env) {
   } else if (login_response.status === 302) {
     return new Response(
       JSON.stringify({
+        suffix: session_cookie_suffix,
         session: session_cookie,
       }),
       {
