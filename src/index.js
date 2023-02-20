@@ -1,10 +1,12 @@
 import { Router } from "itty-router";
 import loginRoute from "./login";
 import attendanceRoute from "./attendance";
+import authCheckRoute from "./authcheck";
 
 const router = Router();
 router.get("/login", loginRoute);
 router.get("/attendance", attendanceRoute);
+router.get("/authcheck", authCheckRoute);
 
 /*
 This is the last route we define, it will match anything that hasn't hit a route we've defined
