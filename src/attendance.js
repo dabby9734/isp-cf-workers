@@ -41,7 +41,15 @@ export default async function attendanceRoute(req, env) {
   const StartDate = searchParams.get("start"); // YYYY-MM-DD
   const EndDate = searchParams.get("end"); // YYYY-MM-DD
   const rankby = searchParams.get("rankby"); // type, date
-  const status = searchParams.get("status"); // 1, 5, 15, 10, 14, 7 comma seperated (can have more than one)
+  const status = searchParams.get("status"); // comma-separated list of attendance types (see below)
+  // Known attendance types:
+  // 1 - Present
+  // 4 - Absent
+  // 5 - Absent (With Excuse)
+  // 7 - MC
+  // 10 - Exempted
+  // 14 - PW Preparation
+  // 15 - Absent (Parents Letter)
 
   if (!session || !session_cookie_suffix || !StartDate || !EndDate || !rankby) {
     return new Response("missing-params", { status: 400 });
