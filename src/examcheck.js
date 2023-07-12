@@ -61,7 +61,7 @@ export default async function examRoutes(req, env) {
       exam_results: examResults,
     };
 
-    return new Response(JSON.stringify(result), { status: 200 });
+    return new Response(JSON.stringify(result), response);
   } else {
     return new Response("internal-server-error", { status: 500 });
   }
